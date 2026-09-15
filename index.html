@@ -339,11 +339,23 @@ function layoutCards(){
   document.querySelectorAll('.card').forEach(c => c.style.height = cardHeight + 'px');
 }
 
-let resizeTimer;
-window.addEventListener('resize', () => {
-  clearTimeout(resizeTimer);
-  resizeTimer = setTimeout(() => { layoutCards(); cardDims = {}; renderAll(); }, 150);
-});
+// ResizeObserver fires on every layout frame while the window is being dragged (browser-throttled to
+// animation-frame rate), so charts stay in sync with the real size instead of stretching to an old
+// viewBox until a debounce timer fires.
+let resizeQueued = false;
+function onGridResize(){
+  if (resizeQueued) return;
+  resizeQueued = true;
+  requestAnimationFrame(() => {
+    resizeQueued = false;
+    layoutCards(); cardDims = {}; renderAll();
+  });
+}
+if (window.ResizeObserver){
+  new ResizeObserver(onGridResize).observe(document.getElementById('grid'));
+} else {
+  window.addEventListener('resize', onGridResize); // very old browsers
+}
 
 buildGrid();
 layoutCards();
