@@ -147,7 +147,7 @@ function ensureCardSvg(sym){
       <text id="lbld0-${sym}" x="${PAD.L}" y="${H-1}" font-size="6.5"></text>
       <text id="lbld1-${sym}" x="${W-PAD.R}" y="${H-1}" font-size="6.5" text-anchor="end"></text>
       <text id="lblempty-${sym}" x="${PAD.L+IW/2}" y="${PAD.T+IH/2+3}" text-anchor="middle" font-size="9" opacity="0">sin datos suficientes</text>
-      <svg id="inner-${sym}" x="${PAD.L}" y="${PAD.T}" width="${Math.max(IW,1)}" height="${Math.max(IH,1)}" viewBox="0 0 1 1" preserveAspectRatio="none">
+      <svg id="inner-${sym}" x="${PAD.L}" y="${PAD.T}" width="${Math.max(IW,1)}" height="${Math.max(IH,1)}" viewBox="0 0 1 1" preserveAspectRatio="none" style="overflow:hidden">
         <path id="area-${sym}" fill-opacity=".08" stroke="none" d=""/>
         <path id="line-${sym}" fill="none" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke" d=""/>
         <circle id="dot-${sym}" r="2.2" opacity="0"/>
