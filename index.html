@@ -15,7 +15,7 @@
     --up:#1E8F5C; --down:#B5562D; --accent:#3468A8; --accent-bg:#E6EEF6;
   }
   *{box-sizing:border-box}
-  html,body{height:100%}
+  html,body{height:100%; overflow:hidden}
   body{margin:0; background:var(--bg); color:var(--ink); font-family:'Public Sans', system-ui, sans-serif;
     padding:16px 16px 28px; display:flex; flex-direction:column; gap:14px}
   h1{font-family:'Fraunces', Georgia, serif; font-size:1.25rem; font-weight:600; margin:0}
@@ -347,7 +347,16 @@ function layoutCards(){
 // chart the instant a resize starts and fade it back in only once things are redrawn and settled.
 let resizeQueued = false;
 let settleTimer;
-function onGridResize(){
+let lastGridW = 0, lastGridH = 0;
+function onGridResize(entries){
+  // layoutCards() itself changes the grid's children, which can nudge the grid's own box by a
+  // sub-pixel amount and re-trigger the observer — without this guard that becomes an infinite loop
+  // (measured: 8 callbacks/2s with zero user interaction). Ignore anything under 1px of real change.
+  if (entries && entries[0]){
+    const {width, height} = entries[0].contentRect;
+    if (Math.abs(width - lastGridW) < 1 && Math.abs(height - lastGridH) < 1) return;
+    lastGridW = width; lastGridH = height;
+  }
   document.body.classList.add('resizing'); // hide instantly, no transition — before any stretched frame paints
   clearTimeout(settleTimer);
   if (resizeQueued) return;
