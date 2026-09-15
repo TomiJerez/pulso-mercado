@@ -40,6 +40,8 @@
   .chg.up{color:var(--up)} .chg.down{color:var(--down)}
   .chartwrap{flex:1; min-height:48px}
   svg{width:100%; height:100%; display:block; overflow:visible}
+  .chartwrap svg{transition:opacity .18s ease}
+  body.resizing .chartwrap svg{opacity:0 !important; transition:none}
   svg text{font-family:'IBM Plex Mono',monospace; fill:var(--ink-faint)}
   .note{font-size:.62rem; color:var(--ink-faint); font-style:italic}
   .sectiontag{font-size:.66rem; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-faint); flex-basis:100%; margin-top:6px}
@@ -339,16 +341,21 @@ function layoutCards(){
   document.querySelectorAll('.card').forEach(c => c.style.height = cardHeight + 'px');
 }
 
-// ResizeObserver fires on every layout frame while the window is being dragged (browser-throttled to
-// animation-frame rate), so charts stay in sync with the real size instead of stretching to an old
-// viewBox until a debounce timer fires.
+// While the window is actively being dragged, there's always a gap between the browser resizing the
+// box and our JS redrawing the chart for the new size — in that gap the old SVG just gets CSS-stretched
+// to the new box, which looks "deformed". Instead of trying to close that gap to zero, we hide the
+// chart the instant a resize starts and fade it back in only once things are redrawn and settled.
 let resizeQueued = false;
+let settleTimer;
 function onGridResize(){
+  document.body.classList.add('resizing'); // hide instantly, no transition — before any stretched frame paints
+  clearTimeout(settleTimer);
   if (resizeQueued) return;
   resizeQueued = true;
   requestAnimationFrame(() => {
     resizeQueued = false;
     layoutCards(); cardDims = {}; renderAll();
+    settleTimer = setTimeout(() => document.body.classList.remove('resizing'), 120);
   });
 }
 if (window.ResizeObserver){
