@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pulso del Mercado — en vivo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    color-scheme: light dark;
+    --bg:#F1F3F5; --surface:#FFFFFF; --surface-2:#E9EDF1;
+    --ink:#1B2430; --ink-muted:#5B6672; --ink-faint:#8A94A0; --border:#D8DEE4;
+    --up:#1E8F5C; --down:#B5562D; --accent:#3468A8; --accent-bg:#E6EEF6;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#14181D; --surface:#1C222A; --surface-2:#232B34;
+      --ink:#E7ECF1; --ink-muted:#9AA7B4; --ink-faint:#71808E; --border:#2C3540;
+      --up:#2FA876; --down:#D97A52; --accent:#4A8BCB; --accent-bg:#213247;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:'Public Sans', system-ui, sans-serif;
+    padding-inline:20px; padding-block:32px 56px}
+  .page{max-width:860px;margin-inline:auto;display:flex;flex-direction:column;gap:32px}
+  h1{font-family:'Fraunces', Georgia, serif; font-size:clamp(1.4rem,3.4vw,1.9rem); font-weight:600; margin:0 0 4px}
+  h2{font-family:'Fraunces', Georgia, serif; font-size:1.05rem; font-weight:600; margin:0}
+  .eyebrow{font-size:.7rem; font-weight:600; letter-spacing:.09em; text-transform:uppercase; color:var(--ink-faint); margin:0 0 8px}
+  .lede{color:var(--ink-muted); font-size:.92rem; line-height:1.6; max-width:66ch; margin:0}
+  .mono{font-family:'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric:tabular-nums}
+  header{display:flex; flex-direction:column; gap:12px}
+  .asof{display:flex; align-items:center; gap:8px; font-size:.8rem; color:var(--ink-faint)}
+  .dot-live{width:7px;height:7px;border-radius:50%;background:var(--up);flex-shrink:0;animation:pulse 2s ease-in-out infinite}
+  @media (prefers-reduced-motion: reduce){.dot-live{animation:none}}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  section{display:flex; flex-direction:column; gap:12px}
+  .panel{background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px 18px 18px}
+  .scale-note{font-size:.68rem; color:var(--ink-faint); text-align:right; margin-bottom:6px}
+  .row{display:grid; grid-template-columns:100px 1fr 78px; gap:10px; align-items:center; padding:8px 0}
+  .row + .row{border-top:1px solid var(--border)}
+  .tk{font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:.88rem}
+  .nm{font-size:.68rem; color:var(--ink-faint); display:block; font-weight:400; font-family:'Public Sans',sans-serif}
+  .barzone{position:relative; height:22px}
+  .barzone .axis{position:absolute; left:50%; top:0; bottom:0; width:1px; background:var(--border)}
+  .barzone .bar{position:absolute; top:3px; bottom:3px; border-radius:3px; transition:width .4s ease}
+  .barzone .bar.up{background:var(--up)}
+  .barzone .bar.down{background:var(--down)}
+  .chg{text-align:right; font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:.86rem}
+  .chg.up{color:var(--up)} .chg.down{color:var(--down)}
+  .legend{display:flex; gap:16px; font-size:.74rem; color:var(--ink-faint)}
+  .legend span{display:flex; align-items:center; gap:5px}
+  .legend .sw{width:9px;height:9px;border-radius:2px}
+  .limit{background:var(--accent-bg); border:1px solid color-mix(in srgb, var(--accent) 30%, transparent); border-radius:10px; padding:11px 13px; font-size:.78rem; color:var(--ink-muted); line-height:1.55}
+  footer{display:flex; flex-direction:column; gap:8px}
+  footer p{margin:0; font-size:.76rem; color:var(--ink-faint); line-height:1.6}
+  footer a{color:var(--ink-muted)}
+  .err{font-size:.8rem; color:var(--down)}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <p class="eyebrow">Panel en vivo · data912.com</p>
+    <h1>Pulso del mercado</h1>
+    <p class="lede">Variación del día de todo lo que seguimos — elegidos y plan B — actualizada sola cada 30 segundos, mientras esta pestaña esté abierta.</p>
+    <div class="asof"><span class="dot-live" id="livedot"></span> <span id="asof">cargando…</span></div>
+  </header>
+
+  <section>
+    <p class="eyebrow">Trading activo</p>
+    <h2>CEDEARs — variación del día</h2>
+    <div class="panel">
+      <div class="scale-note">escala ±5%</div>
+      <div id="tbl-cedears"></div>
+    </div>
+    <div class="legend"><span><span class="sw" style="background:var(--up)"></span>sube</span><span><span class="sw" style="background:var(--down)"></span>baja</span></div>
+  </section>
+
+  <section>
+    <p class="eyebrow">Núcleo dolarizado</p>
+    <h2>ON — variación del día</h2>
+    <div class="panel">
+      <div class="scale-note">escala ±1% (los bonos se mueven mucho menos que las acciones en un día)</div>
+      <div id="tbl-on"></div>
+    </div>
+  </section>
+
+  <div class="limit">
+    Fuente: <a href="https://data912.com" style="color:inherit">data912.com</a>, API pública gratuita de mercado argentino. Los precios de ON acá usan la serie "D" (dólar cable), que es la escala de referencia habitual (~100). El plan completo con montos y análisis vive en el artefacto de Claude — este panel es solo el pulso del día.
+  </div>
+
+  <footer>
+    <hr style="border:none;border-top:1px solid var(--border)">
+    <p>Hosteado gratis en GitHub Pages. Código fuente en <a href="https://github.com/TomiJerez/pulso-mercado">github.com/TomiJerez/pulso-mercado</a>.</p>
+  </footer>
+
+</div>
+
+<script>
+const ON = [
+  {sym:'YMCXD', tk:'YMCX', nm:'YPF'},
+  {sym:'VSCTD', tk:'VSCT', nm:'Vista Energy'},
+  {sym:'TSC4D', tk:'TSC4', nm:'TGS'},
+  {sym:'BACHD', tk:'BACH', nm:'Banco Macro'},
+  {sym:'MGCOD', tk:'MGCO', nm:'Pampa Energía · plan B'},
+  {sym:'BYCHD', tk:'BYCH', nm:'Banco Galicia · plan B'},
+];
+const CEDEAR = [
+  {sym:'MELI', tk:'MELI', nm:''},
+  {sym:'NVDA', tk:'NVDA', nm:''},
+  {sym:'AMD',  tk:'AMD',  nm:''},
+  {sym:'TSLA', tk:'TSLA', nm:'plan B'},
+  {sym:'META', tk:'META', nm:'plan B'},
+  {sym:'AMZN', tk:'AMZN', nm:'plan B'},
+];
+
+function bar(pct, maxAbs){
+  const clamped = Math.max(-maxAbs, Math.min(maxAbs, pct));
+  const w = (Math.abs(clamped) / maxAbs) * 50;
+  const isUp = pct >= 0;
+  const side = isUp ? `left:50%;` : `right:50%;`;
+  return `<div class="barzone"><div class="axis"></div><div class="bar ${isUp?'up':'down'}" style="${side}width:${w.toFixed(1)}%"></div></div>`;
+}
+
+function row(list, quotes, maxAbs){
+  return list.map(item => {
+    const q = quotes[item.sym];
+    if (!q) return `<div class="row"><span class="tk">${item.tk}<span class="nm">${item.nm}</span></span><div class="barzone"><div class="axis"></div></div><span class="chg">s/d</span></div>`;
+    const pct = q.pct_change ?? 0;
+    const sign = pct >= 0 ? '+' : '−';
+    return `<div class="row">
+      <span class="tk">${item.tk}<span class="nm">${item.nm}</span></span>
+      ${bar(pct, maxAbs)}
+      <span class="chg ${pct>=0?'up':'down'}">${sign}${Math.abs(pct).toFixed(2)}%</span>
+    </div>`;
+  }).join('');
+}
+
+async function refresh(){
+  try{
+    const [corpRes, cedRes] = await Promise.all([
+      fetch('https://data912.com/live/arg_corp'),
+      fetch('https://data912.com/live/arg_cedears')
+    ]);
+    const corp = await corpRes.json();
+    const ced = await cedRes.json();
+    const quotes = {};
+    [...corp, ...ced].forEach(q => quotes[q.symbol] = q);
+
+    document.getElementById('tbl-on').innerHTML = row(ON, quotes, 1);
+    document.getElementById('tbl-cedears').innerHTML = row(CEDEAR, quotes, 5);
+    document.getElementById('asof').textContent = 'Actualizado ' + new Date().toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+  }catch(e){
+    document.getElementById('asof').innerHTML = '<span class="err">No se pudo actualizar (' + e.message + ') — reintentando…</span>';
+  }
+}
+
+refresh();
+setInterval(refresh, 30000);
+</script>
+</body>
+</html>
