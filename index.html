@@ -58,9 +58,9 @@
       <div class="asof"><span class="dot-live"></span><span id="asof">cargando…</span></div>
     </div>
     <div class="range-toggle" id="rangeToggle">
-      <button data-range="diario" class="active">Diario</button>
-      <button data-range="mensual">Mensual</button>
-      <button data-range="anual">Anual</button>
+      <button data-range="mes" class="active">Mes</button>
+      <button data-range="semestre">Semestre</button>
+      <button data-range="anio">Año</button>
     </div>
   </div>
 
@@ -90,8 +90,10 @@ const ON = [
   {sym:'MGCOD', tk:'MGCO', nm:'Pampa · plan B'},
   {sym:'BYCHD', tk:'BYCH', nm:'Galicia · plan B'},
 ];
-const RANGE_DAYS = { diario: 30, mensual: 180, anual: 365 };
-let currentRange = 'diario';
+// Nombres pensados para lo que la data realmente permite: solo hay cierres diarios (nunca intradiario),
+// asi que "un dia" no existe como vista util - "Mes" es la mas corta que tiene sentido (30 puntos diarios).
+const RANGE_DAYS = { mes: 30, semestre: 180, anio: 365 };
+let currentRange = 'mes';
 let cedearHistory = {};   // sym -> [{date, c}]
 let onLocalSeries = {};   // sym -> [{date, c}]  (built via localStorage, from today onward)
 let liveQuotes = {};      // sym -> current quote
@@ -160,7 +162,7 @@ function ensureCardSvg(sym){
 }
 
 // Draws the full stable path (index-based x, -price as y) — the SAME path for every zoom level.
-// Only the inner <svg>'s viewBox changes between Diario/Mensual/Anual, which is what produces the zoom.
+// Only the inner <svg>'s viewBox changes between Mes/Semestre/Año, which is what produces the zoom.
 function setSeries(sym, points){
   const n = points ? points.length : 0;
   const emptyLbl = document.getElementById('lblempty-' + sym);
