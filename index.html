@@ -146,7 +146,8 @@ function ensureCardSvg(sym){
       <text id="lblmin-${sym}" x="2" y="${PAD.T+IH+3}" font-size="7.5"></text>
       <text id="lbld0-${sym}" x="${PAD.L}" y="${H-1}" font-size="6.5"></text>
       <text id="lbld1-${sym}" x="${W-PAD.R}" y="${H-1}" font-size="6.5" text-anchor="end"></text>
-      <text id="lblempty-${sym}" x="${PAD.L+IW/2}" y="${PAD.T+IH/2+3}" text-anchor="middle" font-size="9" opacity="0">sin datos suficientes</text>
+      <text id="lblempty-${sym}" x="${PAD.L+IW/2}" y="${PAD.T+IH/2-6}" text-anchor="middle" font-size="${Math.min(Math.max(IH*0.09,11),15)}" fill="var(--ink-muted)" opacity="0">sin historial gratuito</text>
+      <text id="lblempty2-${sym}" x="${PAD.L+IW/2}" y="${PAD.T+IH/2+12}" text-anchor="middle" font-size="${Math.min(Math.max(IH*0.075,9),12)}" opacity="0">se arma solo, día a día, desde hoy</text>
       <svg id="inner-${sym}" x="${PAD.L}" y="${PAD.T}" width="${Math.max(IW,1)}" height="${Math.max(IH,1)}" viewBox="0 0 1 1" preserveAspectRatio="none" style="overflow:hidden">
         <path id="area-${sym}" fill-opacity=".08" stroke="none" d=""/>
         <path id="line-${sym}" fill="none" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke" d=""/>
@@ -161,6 +162,7 @@ function ensureCardSvg(sym){
 function setSeries(sym, points){
   const n = points ? points.length : 0;
   const emptyLbl = document.getElementById('lblempty-' + sym);
+  const emptyLbl2 = document.getElementById('lblempty2-' + sym);
   const lineEl = document.getElementById('line-' + sym);
   const areaEl = document.getElementById('area-' + sym);
   const dotEl = document.getElementById('dot-' + sym);
@@ -168,9 +170,11 @@ function setSeries(sym, points){
   if (n < 2){
     lineEl.setAttribute('d', ''); areaEl.setAttribute('d', ''); dotEl.setAttribute('opacity', '0');
     if (emptyLbl) emptyLbl.setAttribute('opacity', '1');
+    if (emptyLbl2) emptyLbl2.setAttribute('opacity', '1');
     return;
   }
   if (emptyLbl) emptyLbl.setAttribute('opacity', '0');
+  if (emptyLbl2) emptyLbl2.setAttribute('opacity', '0');
   const d = points.map((p,i) => `${i===0?'M':'L'}${i},${(-p.c).toFixed(4)}`).join(' ');
   const areaD = d + ` L${n-1},${FLOOR} L0,${FLOOR} Z`;
   lineEl.setAttribute('d', d);
