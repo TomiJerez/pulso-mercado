@@ -304,17 +304,52 @@ document.getElementById('rangeToggle').addEventListener('click', e => {
   document.querySelectorAll('.range-toggle button').forEach(b => b.classList.toggle('active', b === btn));
   renderAll();
 });
+
+const GAP = 8;
+function layoutCards(){
+  const grid = document.getElementById('grid');
+  // reset to natural (CSS min-height) layout first, so row-wrapping reflects only width
+  document.querySelectorAll('.card').forEach(c => c.style.height = '');
+  void grid.offsetHeight; // force reflow
+
+  const sections = [CEDEAR.map(i => i.sym), ON.map(i => i.sym)];
+  const rowsPerSection = sections.map(syms => {
+    const tops = new Set();
+    syms.forEach(sym => {
+      const el = document.getElementById('card-' + sym);
+      if (el) tops.add(Math.round(el.getBoundingClientRect().top));
+    });
+    return Math.max(tops.size, 1);
+  });
+  const totalRows = rowsPerSection.reduce((a,b) => a+b, 0);
+
+  let tagsHeight = 0;
+  document.querySelectorAll('.sectiontag').forEach(el => tagsHeight += el.getBoundingClientRect().height + GAP);
+
+  const availableHeight = grid.getBoundingClientRect().height;
+  const rowGaps = GAP * (totalRows - 1 + (sections.length - 1)); // gaps between rows + one extra between sections
+  const usable = availableHeight - tagsHeight - rowGaps - 4; // small safety margin, avoid triggering a scrollbar
+  let cardHeight = usable / totalRows;
+  cardHeight = Math.max(cardHeight, 92);
+
+  document.querySelectorAll('.card').forEach(c => c.style.height = cardHeight + 'px');
+}
+
 let resizeTimer;
 window.addEventListener('resize', () => {
   clearTimeout(resizeTimer);
-  resizeTimer = setTimeout(() => { cardDims = {}; renderAll(); }, 150);
+  resizeTimer = setTimeout(() => { layoutCards(); cardDims = {}; renderAll(); }, 150);
 });
 
 buildGrid();
+layoutCards();
 fetchHistory();
 fetchLive();
 setInterval(fetchLive, 30000);
 setInterval(fetchHistory, 300000);
+if (document.fonts && document.fonts.ready){
+  document.fonts.ready.then(() => { layoutCards(); cardDims = {}; renderAll(); });
+}
 </script>
 </body>
 </html>
