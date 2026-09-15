@@ -6,7 +6,7 @@
 <title>Pulso del Mercado — en vivo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500,600&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
     color-scheme: light dark;
@@ -22,92 +22,62 @@
     }
   }
   *{box-sizing:border-box}
+  html,body{height:100%}
   body{margin:0; background:var(--bg); color:var(--ink); font-family:'Public Sans', system-ui, sans-serif;
-    padding-inline:20px; padding-block:32px 56px}
-  .page{max-width:860px;margin-inline:auto;display:flex;flex-direction:column;gap:32px}
-  h1{font-family:'Fraunces', Georgia, serif; font-size:clamp(1.4rem,3.4vw,1.9rem); font-weight:600; margin:0 0 4px}
-  h2{font-family:'Fraunces', Georgia, serif; font-size:1.05rem; font-weight:600; margin:0}
-  .eyebrow{font-size:.7rem; font-weight:600; letter-spacing:.09em; text-transform:uppercase; color:var(--ink-faint); margin:0 0 8px}
-  .lede{color:var(--ink-muted); font-size:.92rem; line-height:1.6; max-width:66ch; margin:0}
+    padding:16px 16px 28px; display:flex; flex-direction:column; gap:14px}
+  h1{font-family:'Fraunces', Georgia, serif; font-size:1.25rem; font-weight:600; margin:0}
   .mono{font-family:'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric:tabular-nums}
-  header{display:flex; flex-direction:column; gap:12px}
-  .asof{display:flex; align-items:center; gap:8px; font-size:.8rem; color:var(--ink-faint)}
-  .dot-live{width:7px;height:7px;border-radius:50%;background:var(--up);flex-shrink:0;animation:pulse 2s ease-in-out infinite}
+  .topbar{display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap}
+  .titlewrap{display:flex; flex-direction:column; gap:3px}
+  .asof{font-size:.72rem; color:var(--ink-faint); display:flex; align-items:center; gap:6px}
+  .dot-live{width:6px;height:6px;border-radius:50%;background:var(--up);animation:pulse 2s ease-in-out infinite}
   @media (prefers-reduced-motion: reduce){.dot-live{animation:none}}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
-  section{display:flex; flex-direction:column; gap:12px}
-  .panel{background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px 18px 18px}
-  .scale-note{font-size:.68rem; color:var(--ink-faint); text-align:right; margin-bottom:6px}
-  .row{display:grid; grid-template-columns:100px 1fr 78px; gap:10px; align-items:center; padding:8px 0}
-  .row + .row{border-top:1px solid var(--border)}
-  .tk{font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:.88rem}
-  .nm{font-size:.68rem; color:var(--ink-faint); display:block; font-weight:400; font-family:'Public Sans',sans-serif}
-  .barzone{position:relative; height:22px}
-  .barzone .axis{position:absolute; left:50%; top:0; bottom:0; width:1px; background:var(--border)}
-  .barzone .bar{position:absolute; top:3px; bottom:3px; border-radius:3px; transition:width .4s ease}
-  .barzone .bar.up{background:var(--up)}
-  .barzone .bar.down{background:var(--down)}
-  .chg{text-align:right; font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:.86rem}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+  .range-toggle{display:flex; gap:2px; background:var(--border); border-radius:9px; padding:2px}
+  .range-toggle button{border:none; background:transparent; color:var(--ink-muted); font-family:'Public Sans',sans-serif;
+    font-size:.82rem; font-weight:600; padding:7px 16px; border-radius:7px; cursor:pointer}
+  .range-toggle button.active{background:var(--surface); color:var(--ink)}
+  .grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:10px; flex:1}
+  .card{background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:10px 12px 8px; display:flex; flex-direction:column; min-height:150px}
+  .card .hd{display:flex; justify-content:space-between; align-items:baseline; gap:8px}
+  .tk{font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:.92rem}
+  .nm{font-size:.62rem; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.03em}
+  .px{font-family:'IBM Plex Mono',monospace; font-size:.8rem; font-weight:600}
+  .chg{font-family:'IBM Plex Mono',monospace; font-size:.76rem; font-weight:600}
   .chg.up{color:var(--up)} .chg.down{color:var(--down)}
-  .legend{display:flex; gap:16px; font-size:.74rem; color:var(--ink-faint)}
-  .legend span{display:flex; align-items:center; gap:5px}
-  .legend .sw{width:9px;height:9px;border-radius:2px}
-  .limit{background:var(--accent-bg); border:1px solid color-mix(in srgb, var(--accent) 30%, transparent); border-radius:10px; padding:11px 13px; font-size:.78rem; color:var(--ink-muted); line-height:1.55}
-  footer{display:flex; flex-direction:column; gap:8px}
-  footer p{margin:0; font-size:.76rem; color:var(--ink-faint); line-height:1.6}
+  .chartwrap{flex:1; min-height:70px}
+  svg{width:100%; height:100%; display:block; overflow:visible}
+  .note{font-size:.62rem; color:var(--ink-faint); font-style:italic}
+  .sectiontag{font-size:.66rem; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-faint); grid-column:1/-1; margin-top:6px}
+  .sectiontag:first-child{margin-top:0}
+  footer{font-size:.68rem; color:var(--ink-faint); display:flex; gap:14px; flex-wrap:wrap}
   footer a{color:var(--ink-muted)}
-  .err{font-size:.8rem; color:var(--down)}
 </style>
 </head>
 <body>
-<div class="page">
 
-  <header>
-    <p class="eyebrow">Panel en vivo · data912.com</p>
-    <h1>Pulso del mercado</h1>
-    <p class="lede">Variación del día de todo lo que seguimos — elegidos y plan B — actualizada sola cada 30 segundos, mientras esta pestaña esté abierta.</p>
-    <div class="asof"><span class="dot-live" id="livedot"></span> <span id="asof">cargando…</span></div>
-  </header>
-
-  <section>
-    <p class="eyebrow">Trading activo</p>
-    <h2>CEDEARs — variación del día</h2>
-    <div class="panel">
-      <div class="scale-note">escala ±5%</div>
-      <div id="tbl-cedears"></div>
+  <div class="topbar">
+    <div class="titlewrap">
+      <h1>Pulso del mercado</h1>
+      <div class="asof"><span class="dot-live"></span><span id="asof">cargando…</span></div>
     </div>
-    <div class="legend"><span><span class="sw" style="background:var(--up)"></span>sube</span><span><span class="sw" style="background:var(--down)"></span>baja</span></div>
-  </section>
-
-  <section>
-    <p class="eyebrow">Núcleo dolarizado</p>
-    <h2>ON — variación del día</h2>
-    <div class="panel">
-      <div class="scale-note">escala ±1% (los bonos se mueven mucho menos que las acciones en un día)</div>
-      <div id="tbl-on"></div>
+    <div class="range-toggle" id="rangeToggle">
+      <button data-range="diario" class="active">Diario</button>
+      <button data-range="mensual">Mensual</button>
+      <button data-range="anual">Anual</button>
     </div>
-  </section>
-
-  <div class="limit">
-    Fuente: <a href="https://data912.com" style="color:inherit">data912.com</a>, API pública gratuita de mercado argentino. Los precios de ON acá usan la serie "D" (dólar cable), que es la escala de referencia habitual (~100). El plan completo con montos y análisis vive en el artefacto de Claude — este panel es solo el pulso del día.
   </div>
 
+  <div class="grid" id="grid"></div>
+
   <footer>
-    <hr style="border:none;border-top:1px solid var(--border)">
-    <p>Hosteado gratis en GitHub Pages. Código fuente en <a href="https://github.com/TomiJerez/pulso-mercado">github.com/TomiJerez/pulso-mercado</a>.</p>
+    <span>Fuente: <a href="https://data912.com">data912.com</a> (API pública)</span>
+    <span>Precio actual se refresca cada 30s</span>
+    <span>ON: sin historia gratuita disponible — el gráfico se arma solo, día a día, desde hoy</span>
+    <span><a href="https://github.com/TomiJerez/pulso-mercado">código fuente</a></span>
   </footer>
 
-</div>
-
 <script>
-const ON = [
-  {sym:'YMCXD', tk:'YMCX', nm:'YPF'},
-  {sym:'VSCTD', tk:'VSCT', nm:'Vista Energy'},
-  {sym:'TSC4D', tk:'TSC4', nm:'TGS'},
-  {sym:'BACHD', tk:'BACH', nm:'Banco Macro'},
-  {sym:'MGCOD', tk:'MGCO', nm:'Pampa Energía · plan B'},
-  {sym:'BYCHD', tk:'BYCH', nm:'Banco Galicia · plan B'},
-];
 const CEDEAR = [
   {sym:'MELI', tk:'MELI', nm:''},
   {sym:'NVDA', tk:'NVDA', nm:''},
@@ -116,30 +86,114 @@ const CEDEAR = [
   {sym:'META', tk:'META', nm:'plan B'},
   {sym:'AMZN', tk:'AMZN', nm:'plan B'},
 ];
+const ON = [
+  {sym:'YMCXD', tk:'YMCX', nm:'YPF'},
+  {sym:'VSCTD', tk:'VSCT', nm:'Vista Energy'},
+  {sym:'TSC4D', tk:'TSC4', nm:'TGS'},
+  {sym:'BACHD', tk:'BACH', nm:'Banco Macro'},
+  {sym:'MGCOD', tk:'MGCO', nm:'Pampa · plan B'},
+  {sym:'BYCHD', tk:'BYCH', nm:'Galicia · plan B'},
+];
+const RANGE_DAYS = { diario: 30, mensual: 180, anual: 365 };
+let currentRange = 'diario';
+let cedearHistory = {};   // sym -> [{date, c}]
+let onLocalSeries = {};   // sym -> [{date, c}]  (built via localStorage, from today onward)
+let liveQuotes = {};      // sym -> current quote
 
-function bar(pct, maxAbs){
-  const clamped = Math.max(-maxAbs, Math.min(maxAbs, pct));
-  const w = (Math.abs(clamped) / maxAbs) * 50;
-  const isUp = pct >= 0;
-  const side = isUp ? `left:50%;` : `right:50%;`;
-  return `<div class="barzone"><div class="axis"></div><div class="bar ${isUp?'up':'down'}" style="${side}width:${w.toFixed(1)}%"></div></div>`;
+function buildGrid(){
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  grid.insertAdjacentHTML('beforeend', '<div class="sectiontag">Trading activo · CEDEARs</div>');
+  CEDEAR.forEach(item => grid.insertAdjacentHTML('beforeend', cardHTML(item)));
+  grid.insertAdjacentHTML('beforeend', '<div class="sectiontag">Núcleo dolarizado · ON</div>');
+  ON.forEach(item => grid.insertAdjacentHTML('beforeend', cardHTML(item)));
+}
+function cardHTML(item){
+  return `<div class="card" id="card-${item.sym}">
+    <div class="hd">
+      <span class="tk">${item.tk}<div class="nm">${item.nm}</div></span>
+      <div style="text-align:right">
+        <div class="px" id="px-${item.sym}">—</div>
+        <div class="chg" id="chg-${item.sym}">—</div>
+      </div>
+    </div>
+    <div class="chartwrap" id="chart-${item.sym}"></div>
+  </div>`;
 }
 
-function row(list, quotes, maxAbs){
-  return list.map(item => {
-    const q = quotes[item.sym];
-    if (!q) return `<div class="row"><span class="tk">${item.tk}<span class="nm">${item.nm}</span></span><div class="barzone"><div class="axis"></div></div><span class="chg">s/d</span></div>`;
+function lineSVG(points, w, h){
+  if (!points || points.length < 2) return `<svg viewBox="0 0 ${w} ${h}"><text x="${w/2}" y="${h/2}" text-anchor="middle" font-size="10" fill="var(--ink-faint)">sin datos suficientes</text></svg>`;
+  const vals = points.map(p => p.c);
+  let min = Math.min(...vals), max = Math.max(...vals);
+  if (min === max){ min -= 1; max += 1; }
+  const padY = (max - min) * 0.12;
+  min -= padY; max += padY;
+  const padL = 4, padR = 4, padT = 6, padB = 6;
+  const iw = w - padL - padR, ih = h - padT - padB;
+  const x = i => padL + (i / (points.length - 1)) * iw;
+  const y = v => padT + ih - ((v - min) / (max - min)) * ih;
+  const first = points[0].c, last = points[points.length-1].c;
+  const up = last >= first;
+  const color = up ? 'var(--up)' : 'var(--down)';
+  let d = points.map((p,i) => `${i===0?'M':'L'}${x(i).toFixed(1)},${y(p.c).toFixed(1)}`).join(' ');
+  const areaD = d + ` L${x(points.length-1).toFixed(1)},${(padT+ih).toFixed(1)} L${x(0).toFixed(1)},${(padT+ih).toFixed(1)} Z`;
+  return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+    <line x1="${padL}" y1="${padT+ih}" x2="${w-padR}" y2="${padT+ih}" stroke="var(--border)" stroke-width="1"/>
+    <path d="${areaD}" fill="${color}" fill-opacity="0.08" stroke="none"/>
+    <path d="${d}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+    <circle cx="${x(points.length-1).toFixed(1)}" cy="${y(last).toFixed(1)}" r="2.5" fill="${color}"/>
+  </svg>`;
+}
+
+function renderChart(sym, series){
+  const el = document.getElementById('chart-' + sym);
+  if (!el) return;
+  const rect = el.getBoundingClientRect();
+  const w = Math.max(rect.width, 100), h = Math.max(rect.height, 60);
+  const days = RANGE_DAYS[currentRange];
+  const slice = series.slice(-days);
+  el.innerHTML = lineSVG(slice, w, h);
+}
+
+function renderAll(){
+  CEDEAR.forEach(item => renderChart(item.sym, cedearHistory[item.sym] || []));
+  ON.forEach(item => renderChart(item.sym, onLocalSeries[item.sym] || []));
+}
+
+function updateLiveLabels(){
+  [...CEDEAR, ...ON].forEach(item => {
+    const q = liveQuotes[item.sym];
+    const pxEl = document.getElementById('px-' + item.sym);
+    const chgEl = document.getElementById('chg-' + item.sym);
+    if (!q || !pxEl) return;
+    pxEl.textContent = '$' + Math.round(q.c).toLocaleString('es-AR');
     const pct = q.pct_change ?? 0;
-    const sign = pct >= 0 ? '+' : '−';
-    return `<div class="row">
-      <span class="tk">${item.tk}<span class="nm">${item.nm}</span></span>
-      ${bar(pct, maxAbs)}
-      <span class="chg ${pct>=0?'up':'down'}">${sign}${Math.abs(pct).toFixed(2)}%</span>
-    </div>`;
-  }).join('');
+    chgEl.textContent = (pct>=0?'+':'−') + Math.abs(pct).toFixed(2) + '%';
+    chgEl.className = 'chg ' + (pct>=0?'up':'down');
+  });
 }
 
-async function refresh(){
+// ON: build a local, growing history in localStorage since no free API has it
+function updateOnLocalSeries(){
+  const todayKey = new Date().toISOString().slice(0,10);
+  ON.forEach(item => {
+    const q = liveQuotes[item.sym];
+    if (!q) return;
+    const storeKey = 'pulso_on_' + item.sym;
+    let series = JSON.parse(localStorage.getItem(storeKey) || '[]');
+    const last = series[series.length - 1];
+    if (last && last.date === todayKey){
+      last.c = q.c; // update today's point
+    } else {
+      series.push({date: todayKey, c: q.c});
+    }
+    if (series.length > 400) series = series.slice(-400);
+    localStorage.setItem(storeKey, JSON.stringify(series));
+    onLocalSeries[item.sym] = series;
+  });
+}
+
+async function fetchLive(){
   try{
     const [corpRes, cedRes] = await Promise.all([
       fetch('https://data912.com/live/arg_corp'),
@@ -147,19 +201,45 @@ async function refresh(){
     ]);
     const corp = await corpRes.json();
     const ced = await cedRes.json();
-    const quotes = {};
-    [...corp, ...ced].forEach(q => quotes[q.symbol] = q);
-
-    document.getElementById('tbl-on').innerHTML = row(ON, quotes, 1);
-    document.getElementById('tbl-cedears').innerHTML = row(CEDEAR, quotes, 5);
-    document.getElementById('asof').textContent = 'Actualizado ' + new Date().toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+    liveQuotes = {};
+    [...corp, ...ced].forEach(q => liveQuotes[q.symbol] = q);
+    updateOnLocalSeries();
+    updateLiveLabels();
+    renderAll();
+    document.getElementById('asof').textContent = 'Actualizado ' + new Date().toLocaleTimeString('es-AR');
   }catch(e){
-    document.getElementById('asof').innerHTML = '<span class="err">No se pudo actualizar (' + e.message + ') — reintentando…</span>';
+    document.getElementById('asof').textContent = 'Error al actualizar — reintentando…';
   }
 }
 
-refresh();
-setInterval(refresh, 30000);
+async function fetchHistory(){
+  await Promise.all(CEDEAR.map(async item => {
+    try{
+      const res = await fetch('https://data912.com/historical/cedears/' + item.sym);
+      const data = await res.json();
+      cedearHistory[item.sym] = data.map(d => ({date: d.date, c: d.c}));
+    }catch(e){ cedearHistory[item.sym] = []; }
+  }));
+  ON.forEach(item => {
+    onLocalSeries[item.sym] = JSON.parse(localStorage.getItem('pulso_on_' + item.sym) || '[]');
+  });
+  renderAll();
+}
+
+document.getElementById('rangeToggle').addEventListener('click', e => {
+  const btn = e.target.closest('button[data-range]');
+  if (!btn) return;
+  currentRange = btn.dataset.range;
+  document.querySelectorAll('.range-toggle button').forEach(b => b.classList.toggle('active', b === btn));
+  renderAll();
+});
+window.addEventListener('resize', () => renderAll());
+
+buildGrid();
+fetchHistory();
+fetchLive();
+setInterval(fetchLive, 30000);
+setInterval(fetchHistory, 300000);
 </script>
 </body>
 </html>
