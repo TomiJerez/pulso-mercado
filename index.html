@@ -15,7 +15,8 @@
     --up:#1E8F5C; --down:#B5562D; --accent:#3468A8; --accent-bg:#E6EEF6;
   }
   *{box-sizing:border-box}
-  html,body{height:100%; overflow:hidden}
+  html,body{height:100%}
+  body{overflow-y:auto}
   body{margin:0; background:var(--bg); color:var(--ink); font-family:'Public Sans', system-ui, sans-serif;
     padding:16px 16px 28px; display:flex; flex-direction:column; gap:14px}
   h1{font-family:'Fraunces', Georgia, serif; font-size:1.25rem; font-weight:600; margin:0}
@@ -30,7 +31,7 @@
   .range-toggle button{border:none; background:transparent; color:var(--ink-muted); font-family:'Public Sans',sans-serif;
     font-size:.82rem; font-weight:600; padding:7px 16px; border-radius:7px; cursor:pointer}
   .range-toggle button.active{background:var(--surface); color:var(--ink)}
-  .grid{display:flex; flex-wrap:wrap; gap:8px; flex:1; align-content:flex-start; min-height:0; overflow:hidden}
+  .grid{display:flex; flex-wrap:wrap; gap:8px; flex:1; align-content:flex-start; min-height:0}
   .card{background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:7px 10px 6px; display:flex; flex-direction:column; min-height:92px; flex:1 1 215px; min-width:0}
   .card .hd{display:flex; justify-content:space-between; align-items:baseline; gap:8px}
   .tk{font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:.82rem}
